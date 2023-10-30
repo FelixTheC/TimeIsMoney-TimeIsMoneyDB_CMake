@@ -11,11 +11,20 @@ class TaskDB
 {
 public:
     TaskDB();
-    ~TaskDB();
+    TaskDB(const std::string &db_name);
+    ~TaskDB() = default;
+    
     QSharedPointer<QSqlDatabase> getDBPtr();
+    
+    void create_table_invoice();
+    void create_table_tasks();
+    void create_table_external_api();
 
 private:
-    QSharedPointer<QSqlDatabase> task_db;
+    std::string database_name {};
+    QSharedPointer<QSqlDatabase> db;
+    QSharedPointer<QSqlDatabase> connect_db();
+    void init_db();
 };
 
 #endif // TASKDB_HPP

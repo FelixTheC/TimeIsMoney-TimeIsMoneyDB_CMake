@@ -1,11 +1,26 @@
+#include <iostream>
 #include "../include/taskdb.hpp"
+#include "../include/tasks_table.hpp"
+#include "../include/invoice_table.hpp"
+#include "../include/externalapi_table.hpp"
+
 
 TaskDB::TaskDB()
 {
-    auto db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("taskdata.db3");
-    task_db = QSharedPointer<QSqlDatabase>(new QSqlDatabase(db));
+    database_name = "taskdata";
+    init_db();
+}
 
+TaskDB::TaskDB(const std::string &db_name)
+{
+    database_name = db_name;
+    init_db();
+}
+
+void TaskDB::init_db()
+{
+    auto task_db = connect_db();
+    
     if (!task_db->open())
     {
         qWarning("Connection error: No connection to DB.");
@@ -13,45 +28,108 @@ TaskDB::TaskDB()
     else
     {
         QSqlQuery query;
-        query.exec("create table if not exists tasks"
-                   "("
-                   "id             integer      not null constraint tasks_pk primary key autoincrement,"
-                   "client         varchar(255) not null,"
-                   "task           varchar(255) not null,"
-                   "price_per_hour DOUBLE(5,2),"
-                   "probono        bool,"
-                   "created_at     datetime,"
-                   "closed_at      datetime"
-                   ");");
-        query.exec("create index tasks_client_index on tasks (client);");
-        query.exec("create index tasks_client_task_index on tasks (client, task);");
-        query.exec("create index tasks_closed_at_index on tasks (closed_at desc);");
-        query.exec("create index tasks_created_at_index on tasks (created_at);");
-        query.exec("create unique index tasks_id_uindex on tasks (id);");
-        query.exec("create table invoice_settings\
-            (\
-                id integer not null\
-                    constraint invoice_settings_pk\
-                        primary key autoincrement,\
-                tax double,\
-                user_currency varchar(10),\
-                client_currency varchar(10),\
-                exchange_rate double,\
-                header text,\
-                footer text\
-                   );");
-
-        query.exec("create unique index invoice_settings_id_uindex on invoice_settings (id);");
+        
+        query.exec(CREATE_TASK_TABLE);
+        for (const auto &val: TASK_INDEX)
+        {
+            query.exec(val);
+        }
+        
+        query.exec(CREATE_INVOICE_TABLE);
+        for (const auto &val: INVOICE_INDEX)
+        {
+            query.exec(val);
+        }
+        
+        query.exec(CREATE_EXTERNAL_API_TABLE);
+        query.exec(CREATE_EXTERNAL_API_TOKEN);
+        query.exec(CREATE_EXTERNAL_API_DATA);
+        
+        for (const auto &val: EXTERNAL_API_INDEX)
+        {
+            query.exec(val);
+        }
     }
-}
-
-TaskDB::~TaskDB()
-{
+    
     task_db->close();
 }
 
 QSharedPointer<QSqlDatabase>
 TaskDB::getDBPtr()
 {
-    return task_db;
+    if (db)
+    {
+        return db;
+    }
+    else
+    {
+        auto db_ = QSqlDatabase::addDatabase("QSQLITE");
+        db_.setDatabaseName(QString::fromStdString(database_name + ".db3"));
+        return QSharedPointer<QSqlDatabase>(new QSqlDatabase(db_));
+    }
+}
+
+QSharedPointer<QSqlDatabase> TaskDB::connect_db()
+{
+    if (db)
+    {
+        db->close();
+        db->open();
+        return db;
+    }
+    else
+    {
+        auto sqlDatabase = QSqlDatabase::addDatabase("QSQLITE");
+        sqlDatabase.setDatabaseName(QString::fromStdString(database_name + ".db3"));
+        db = QSharedPointer<QSqlDatabase>(new QSqlDatabase(sqlDatabase));
+        
+        if (!db->open())
+        {
+            qWarning("Connection error: No connection to DB.");
+            
+            return nullptr;
+        }
+        
+        return db;
+    }
+}
+
+void TaskDB::create_table_invoice()
+{
+    auto sql_db = connect_db();
+    
+    QSqlQuery query {};
+    
+    query.exec(CREATE_INVOICE_TABLE);
+    for (const auto &val: INVOICE_INDEX)
+    {
+        query.exec(val);
+    }
+}
+
+void TaskDB::create_table_tasks()
+{
+    auto sql_db = connect_db();
+    QSqlQuery query {};
+    
+    query.exec(CREATE_TASK_TABLE);
+    for (const auto &val: TASK_INDEX)
+    {
+        query.exec(val);
+    }
+}
+
+void TaskDB::create_table_external_api()
+{
+    auto sql_db = connect_db();
+    QSqlQuery query {};
+    
+    query.exec(CREATE_EXTERNAL_API_TABLE);
+    query.exec(CREATE_EXTERNAL_API_TOKEN);
+    query.exec(CREATE_EXTERNAL_API_DATA);
+    
+    for (const auto &val: EXTERNAL_API_INDEX)
+    {
+        query.exec(val);
+    }
 }

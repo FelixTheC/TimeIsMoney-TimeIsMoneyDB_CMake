@@ -10,7 +10,12 @@ set(CMAKE_PREFIX_PATH "/home/felix/Qt/6.5.0/gcc_64")
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Sql)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Sql)
 
-add_library(TimeIsMoneyDB_CMake SHARED src/taskdb.cpp)
+add_library(TimeIsMoneyDB_CMake
+        SHARED
+        src/taskdb.cpp
+        include/tasks_table.hpp
+        include/invoice_table.hpp
+        include/externalapi_table.hpp)
 
 target_link_libraries(TimeIsMoneyDB_CMake
     Qt${QT_VERSION_MAJOR}::Core
