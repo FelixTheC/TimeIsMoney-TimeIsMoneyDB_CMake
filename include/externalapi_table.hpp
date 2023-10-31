@@ -27,7 +27,7 @@ const QString CREATE_EXTERNAL_API_DATA = "create table if not exists api_data"
                                          "    id integer not null constraint api_data_pk primary key autoincrement,"
                                          "    start_api varchar(255) not null,"
                                          "    stop_api  varchar(255) not null,"
-                                         "    req_dat   text         not null,"
+                                         "    req_data  text         not null,"
                                          "    base_url_pk integer not null unique,"
                                          "    CONSTRAINT base_url_pk FOREIGN KEY (base_url_pk) REFERENCES api_base_url(id)"
                                          ");";
