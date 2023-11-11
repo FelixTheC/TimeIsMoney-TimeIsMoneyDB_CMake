@@ -11,7 +11,7 @@ class TaskDB
 {
 public:
     TaskDB();
-    TaskDB(const std::string &db_name);
+    explicit TaskDB(const std::string &db_name);
     ~TaskDB() = default;
     
     QSharedPointer<QSqlDatabase> getDBPtr();

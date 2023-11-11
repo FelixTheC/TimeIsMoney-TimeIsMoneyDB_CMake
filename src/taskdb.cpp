@@ -3,6 +3,7 @@
 #include "../include/tasks_table.hpp"
 #include "../include/invoice_table.hpp"
 #include "../include/externalapi_table.hpp"
+#include "../include/serial_table.hpp"
 
 
 TaskDB::TaskDB()
@@ -44,6 +45,7 @@ void TaskDB::init_db()
         query.exec(CREATE_EXTERNAL_API_TABLE);
         query.exec(CREATE_EXTERNAL_API_TOKEN);
         query.exec(CREATE_EXTERNAL_API_DATA);
+        query.exec(CREATE_SERIAL_SETUP_TABLE);
         
         for (const auto &val: EXTERNAL_API_INDEX)
         {

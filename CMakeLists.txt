@@ -15,7 +15,8 @@ add_library(TimeIsMoneyDB_CMake
         src/taskdb.cpp
         include/tasks_table.hpp
         include/invoice_table.hpp
-        include/externalapi_table.hpp)
+        include/externalapi_table.hpp
+        include/serial_table.hpp)
 
 target_link_libraries(TimeIsMoneyDB_CMake
     Qt${QT_VERSION_MAJOR}::Core
