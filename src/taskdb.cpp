@@ -51,6 +51,11 @@ void TaskDB::init_db()
         {
             query.exec(val);
         }
+        
+        for (const auto &migration : EXTERNAL_API_MIGRATIONS)
+        {
+            query.exec(migration);
+        }
     }
     
     task_db->close();
