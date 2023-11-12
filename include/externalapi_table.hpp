@@ -36,7 +36,7 @@ const QString CREATE_EXTERNAL_API_DATA = "create table if not exists api_data"
 const QString EXTERNAL_API_INDEX[] = {"create unique index api_base_url__uindex on api_base_url (base_url);"};
 
 const QString EXTERNAL_API_MIGRATIONS[] = {
-        "alter table api_data add column_name text default 'json' not null on conflict ignore;"
+        "alter table api_data add content_type text default 'json' not null on conflict ignore;"
 };
 
 #endif //TIMEISMONEY_CMAKE_EXTERNALAPI_TABLE_HPP
